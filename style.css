@@ -1,0 +1,15 @@
+ul > li {
+    list-style: none
+}
+
+li > a {
+    color: black 
+}
+#todo > li  {
+    text-decoration: none !important
+}
+
+#done > li {
+    color: gray;
+    text-decoration: line-through
+}
