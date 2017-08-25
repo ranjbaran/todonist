@@ -8,6 +8,8 @@ function todoApp() {
     const ADD_TODO = "ADD_TODO"
     const DONE_TODO = "DONE_TODO"
     const TODO_DONE = "TODO_DONE"
+    const REMOVE_TOOD = "REMOVE_TODO"
+    const REMOVE_DONE = "REMOVE_DONE"
 
     // action creator
     function addTodo(todo) {
@@ -27,6 +29,20 @@ function todoApp() {
     function todoDone(index) {
         return {
             type: TODO_DONE,
+            index: index
+        }
+    }
+
+    function removeTodo(index) {
+        return {
+            type: REMOVE_TOOD,
+            index: index
+        }
+    }
+
+    function removeDone(index) {
+        return {
+            type: REMOVE_DONE,
             index: index
         }
     }
@@ -65,6 +81,20 @@ function todoApp() {
                     ],
                     done: done
                 }
+            case REMOVE_TOOD:
+                let removeTodo = [].concat(state.todo);
+                removeTodo.splice(action.index, 1);
+                return {
+                    ...state,
+                    todo: removeTodo
+                }
+            case REMOVE_DONE:
+                let removeDone = [].concat(state.done);
+                removeDone.splice(action.index, 1);
+                return {
+                    ...state,
+                    done: removeDone
+                }
             default:
                 return state
         }
@@ -89,34 +119,68 @@ function todoApp() {
         let todoUl = document.getElementById("todo");
         todoUl.innerHTML = "";
         for (let i in state.todo) {
+            let span = document.createElement("span");
+            span.className = "oi oi-delete";
+            span.onclick = removeTodoOnClick;
+
+            let textSpan = document.createElement("span");
+            textSpan.innerHTML = state.todo[i]
+            textSpan.onclick = todoOnClick
+
             let li = document.createElement("li");
-            li.innerHTML = state.todo[i];
             li.setAttribute('data-index', i)
-            li.onclick = todoOnClick
+
+            li.appendChild(span);
+            li.appendChild(document.createTextNode(" "))
+            li.appendChild(textSpan)
+
             todoUl.appendChild(li);
         }
 
         let doneUl = document.getElementById("done");
         doneUl.innerHTML = "";
         for (let i in state.done) {
+            let span = document.createElement("span");
+            span.className = "oi oi-delete";
+            span.onclick = removeDoneOnClick;
+
+            let textSpan = document.createElement("span");
+            textSpan.innerHTML = state.done[i]
+            textSpan.onclick = doneOnClick
+
             let li = document.createElement("li");
-            li.innerHTML = state.done[i] 
             li.setAttribute('data-index', i)
-            li.onclick = doneOnClick
+
+            li.appendChild(span);
+            li.appendChild(document.createTextNode(" "))
+            li.appendChild(textSpan)
+
             doneUl.appendChild(li);
         }
     }
 
     function todoOnClick(e) {
         let element = e.target;
-        let index = element.dataset.index;
+        let index = (element.parentElement).dataset.index;
         store.dispatch(doneTodo(index));
     }
     
     function doneOnClick(e) {
         let element = e.target;
-        let index = element.dataset.index
+        let index = (element.parentElement).dataset.index
         store.dispatch(todoDone(index));
+    }
+
+    function removeTodoOnClick(e) {
+        let element = e.target;
+        let index = (element.parentElement).dataset.index;
+        store.dispatch(removeTodo(index));    
+    }
+
+    function removeDoneOnClick(e){
+        let element = e.target;
+        let index = (element.parentElement).dataset.index;
+        store.dispatch(removeDone(index)); 
     }
 
 }
